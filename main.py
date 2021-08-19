@@ -119,7 +119,6 @@ async def on_message(message):
             embed.add_field(name='=멘트 [홍보글]', value='홍보멘트를 설정합니다', inline=False)
             embed.add_field(name='=웹훅추가 [웹훅]', value='줄바꿈으로 웹훅 여러개 추가 가능합니다', inline=False)
             embed.add_field(name='=전송', value='설정된 값에 맞춰 자동으로 웹훅메시지를 전송합니다', inline=False)
-            embed.add_field(name='=정지', value='웹훅메시지 전송을 정지합니다', inline=False)
         await message.channel.send(f'{message.author.mention} 디엠을 확인해주세요')
         await message.author.send('https://discord.gg/F82Z6c43WE', embed=embed)
 
@@ -370,27 +369,6 @@ async def on_message(message):
         await message.reply('봉순이네 복구중\nhttps://discord.gg/F82Z6c43WE', embed=embed)
         await work()
 
-    if message.content == '=정지':
-        if not message.author.guild_permissions.administrator:
-            embed = discord.Embed(description='', color=discord.Colour.red())
-            embed.set_author(name='권한 부족', icon_url='https://cdn.discordapp.com/emojis/820904919484596245.png?v=1')
-            embed.set_footer(text=f'▶ {message.author}')
-            await message.reply(embed=embed)
-            return
-
-        if not os.path.isdir(f'./DB/{message.guild.id}/working'):
-            embed = discord.Embed(description='', color=discord.Colour.red())
-            embed.set_author(name='진행 중이지 않음',
-                             icon_url='https://cdn.discordapp.com/emojis/820904919484596245.png?v=1')
-            embed.set_footer(text=f'▶ {message.author}')
-            await message.reply(embed=embed)
-            return
-        shutil.rmtree(f'./DB/{message.guild.id}/working', ignore_errors=True)
-        embed = discord.Embed(description='', color=discord.Colour.green())
-        embed.set_author(name=f'전송 정지됨',
-                         icon_url='https://cdn.discordapp.com/emojis/783331055326724137.png?v=1')
-        embed.set_footer(text=f'▶ {message.author}')
-        await message.reply(embed=embed)
 
     if message.content.startswith('=멘트'):
         if not message.author.guild_permissions.administrator:
