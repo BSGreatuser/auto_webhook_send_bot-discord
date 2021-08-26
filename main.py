@@ -140,7 +140,6 @@ async def on_message(message):
             embed.add_field(name='=멘트 [홍보글]', value='홍보멘트를 설정합니다', inline=False)
             embed.add_field(name='=웹훅목록', value='추가된 웹훅목록을 보여줍니다', inline=False)
             embed.add_field(name='=웹훅추가 [웹훅]', value='줄바꿈으로 웹훅 여러개 추가 가능합니다', inline=False)
-            embed.add_field(name='=웹훅삭제 [웹훅]', value='지정한 웹훅을 목록에서 삭제합니다', inline=False)
             embed.add_field(name='=설정값', value='모든 설정값을 보여줍니다', inline=False)
             embed.add_field(name='=테스트', value='설정된 임베드를 명령어 입력 채널에 전송합니다')
             embed.add_field(name='=전송', value='설정된 값에 맞춰 자동으로 웹훅메시지를 전송합니다', inline=False)
@@ -467,51 +466,6 @@ async def on_message(message):
         await message.channel.send(f'{message.author.mention} 디엠을 확인해주세요')
 
         await message.author.send(file=discord.File(f'./DB/{message.guild.id}/{message.guild.id}.txt'))
-
-    if message.content.startswith('=웹훅삭제'):
-        if not message.author.guild_permissions.administrator:
-            embed = discord.Embed(description='', color=discord.Colour.red())
-            embed.set_author(name='권한 부족', icon_url='https://cdn.discordapp.com/emojis/820904919484596245.png?v=1')
-            embed.set_footer(text=f'▶ {message.author}')
-            await message.reply(embed=embed)
-            return
-
-        if not os.path.isdir(f'./DB/{message.guild.id}'):
-            embed = discord.Embed(description='', color=discord.Colour.red())
-            embed.set_author(name='등록되지 않은 서버', icon_url='https://cdn.discordapp.com/emojis/820904919484596245.png?v=1')
-            await message.reply(embed=embed)
-            return
-
-        try:
-            target = message.content.split(" ")[1]
-        except IndexError:
-            embed = discord.Embed(description='', color=discord.Colour.red())
-            embed.set_author(name='웹훅이 입력되지 않음',
-                             icon_url='https://cdn.discordapp.com/emojis/820904919484596245.png?v=1')
-            embed.set_footer(text=f'▶ {message.author}')
-            await message.reply(embed=embed)
-            return
-
-        with open(f'./DB/{message.guild.id}/{message.guild.id}.txt', 'r', encoding='UTF8') as f:
-            lines = f.readlines()
-
-        if not target in str(lines):
-            embed = discord.Embed(description='', color=discord.Colour.red())
-            embed.set_author(name='목록에 존재하지 않는 웹훅', icon_url='https://cdn.discordapp.com/emojis/820991216182624266.png?v=1')
-            embed.set_footer(text=f'▶ {message.author}')
-            await message.reply(embed=embed)
-            return
-
-        with open(f'./DB/{message.guild.id}/{message.guild.id}.txt', 'w', encoding='UTF8') as f:
-            for line in lines:
-                if line.strip('\n') != target:
-                    f.write(line)
-            f.close()
-
-        embed = discord.Embed(description='', color=discord.Colour.green())
-        embed.set_author(name=f'삭제완료', icon_url='https://cdn.discordapp.com/emojis/820991216203726878.png?v=1')
-        embed.set_footer(text=f'▶ {message.author}')
-        await message.channel.send(message.author.mention, embed=embed)
 
     if message.content.startswith('=웹훅추가'):
         if not message.author.guild_permissions.administrator:
