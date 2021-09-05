@@ -18,8 +18,11 @@ status = cycle(['=명령어', '{n}개의 서버', '오픈소스 > 봉순#1234'])
 
 @client.event
 async def on_ready():
-    os.mkdir('./DB')
-    print(client.user + ' 접속됨')
+    try:
+        os.mkdir('./DB')
+    except:
+        pass
+    print(str(client.user) + ' 접속됨')
     change_message.start()
 
 @client.event
