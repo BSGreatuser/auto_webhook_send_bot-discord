@@ -137,16 +137,14 @@ async def on_message(message):
             embed.add_field(name='=수정 에브리원 [true/false]', value='웹훅메시지 전송시 @everyone 태그여부를 설정합니다', inline=False)
             embed.add_field(name='=수정 서버주소 [서버주소]', value='웹훅메시지에 들어갈 서버주소를 설정합니다', inline=False)
             embed.add_field(name='=수정 웹훅이름 [웹훅이름]', value='웹훅의 이름을 설정합니다', inline=False)
-            embed.add_field(name='=수정 색깔 [Hex코드]', value='웹훅메시지 임베드의 색깔을 설정합니다', inline=False)
             embed.add_field(name='=수정 썸네일 [사진링크]', value='웹훅메시지 임베드의 썸네일사진을 설정합니다', inline=False)
-            embed.add_field(name='=수정 딜레이 [숫자(분)]', value='50분 미만으로 설정', inline=False)
             embed.add_field(name='=멘트 [홍보글]', value='홍보멘트를 설정합니다', inline=False)
             embed.add_field(name='=웹훅목록', value='추가된 웹훅목록을 보여줍니다', inline=False)
             embed.add_field(name='=웹훅추가 [웹훅]', value='줄바꿈으로 웹훅 여러개 추가 가능합니다', inline=False)
-            embed.add_field(name='=설정값', value='모든 설정값을 보여줍니다', inline=False)
             embed.add_field(name='=테스트', value='설정된 임베드를 명령어 입력 채널에 전송합니다')
             embed.add_field(name='=전송', value='설정된 값에 맞춰 자동으로 웹훅메시지를 전송합니다', inline=False)
             embed.add_field(name='=정지', value='웹훅메시지 전송을 정지합니다', inline=False)
+            #수정금지
             embed.set_footer(text='오픈소스 >\nhttps://github.com/BSGreatuser/auto_webhook_send_bot-discord (봉순#1234)') #수정금지
         await message.channel.send(f'{message.author.mention} 디엠을 확인해주세요')
         await message.author.send(embed=embed)
@@ -308,92 +306,7 @@ async def on_message(message):
             embed.set_footer(text=f'▶ {message.author}')
             await message.reply(embed=embed)
 
-        if target == '색깔':
-            try:
-                color = message.content.split(" ")[2]
-            except IndexError:
-                embed = discord.Embed(description='', color=discord.Colour.red())
-                embed.set_author(name='색깔이 입력되지 않음',
-                                 icon_url='https://cdn.discordapp.com/emojis/820904919484596245.png?v=1')
-                embed.set_footer(text=f'▶ {message.author}')
-                await message.reply(embed=embed)
-                return
-
-            if not str(color).startswith('#'):
-                embed = discord.Embed(description='', color=discord.Colour.red())
-                embed.set_author(name='색깔 형식이 잘못됨\nHEX코드를 입력해주세요\nex) #0099FF',
-                                 icon_url='https://cdn.discordapp.com/emojis/820904919484596245.png?v=1')
-                embed.set_footer(text=f'▶ {message.author}')
-                await message.reply(embed=embed)
-                return
-
-            without_shop = str(color).replace('#', '')
-            #without_shop = '0x' + without_shop
-            #ten = int(without_shop, 16)
-
-            data['color'] = without_shop
-            with open(f'./DB/{message.guild.id}/{message.guild.id}.json', 'w', encoding='utf-8') as making:
-                json.dump(data, making, indent='\t')
-
-            with open(f'./DB/{message.guild.id}/{message.guild.id}.json', 'r') as f:
-                data = json.load(f)
-
-            status = data['color']
-            embed = discord.Embed(description='', color=discord.Colour.green())
-            embed.set_author(name=f'{status}({without_shop})로 수정됨',
-                             icon_url='https://cdn.discordapp.com/emojis/820991216203726878.png?v=1')
-            embed.set_footer(text=f'▶ {message.author}')
-            await message.reply(embed=embed)
-
-        if target == '딜레이':
-            try:
-                thumb_url = message.content.split(" ")[2]
-            except IndexError:
-                embed = discord.Embed(description='', color=discord.Colour.red())
-                embed.set_author(name='숫자가 입력되지 않음',
-                                 icon_url='https://cdn.discordapp.com/emojis/820904919484596245.png?v=1')
-                embed.set_footer(text=f'▶ {message.author}')
-                await message.reply(embed=embed)
-                return
-
-            if not str(thumb_url).isdecimal():
-                embed = discord.Embed(description='', color=discord.Colour.red())
-                embed.set_author(name='숫자가 입력되지 않음',
-                                 icon_url='https://cdn.discordapp.com/emojis/820904919484596245.png?v=1')
-                embed.set_footer(text=f'▶ {message.author}')
-                await message.reply(embed=embed)
-                return
-
-            if int(thumb_url) > 50:
-                embed = discord.Embed(description='', color=discord.Colour.red())
-                embed.set_author(name='최대 딜레이 50분',
-                                 icon_url='https://cdn.discordapp.com/emojis/820904919484596245.png?v=1')
-                embed.set_footer(text=f'▶ {message.author}')
-                await message.reply(embed=embed)
-                return
-
-            if int(thumb_url) < 30:
-                embed = discord.Embed(description='', color=discord.Colour.red())
-                embed.set_author(name='최소 딜레이 30분',
-                                 icon_url='https://cdn.discordapp.com/emojis/820904919484596245.png?v=1')
-                embed.set_footer(text=f'▶ {message.author}')
-                await message.reply(embed=embed)
-                return
-
-            data['delay'] = thumb_url
-            with open(f'./DB/{message.guild.id}/{message.guild.id}.json', 'w', encoding='utf-8') as making:
-                json.dump(data, making, indent='\t')
-
-            with open(f'./DB/{message.guild.id}/{message.guild.id}.json', 'r') as f:
-                data = json.load(f)
-
-            status = data['delay']
-            embed = discord.Embed(description='', color=discord.Colour.green())
-            embed.set_author(name=f'{status}분으로 수정됨',
-                             icon_url='https://cdn.discordapp.com/emojis/820991216203726878.png?v=1')
-            embed.set_footer(text=f'▶ {message.author}')
-            await message.reply(embed=embed)
-
+   
         if target == '썸네일':
             try:
                 thumb_url = message.content.split(" ")[2]
@@ -418,39 +331,6 @@ async def on_message(message):
                              icon_url='https://cdn.discordapp.com/emojis/820991216203726878.png?v=1')
             embed.set_footer(text=f'▶ {message.author}')
             await message.reply(embed=embed)
-
-    if message.content == '=설정값':
-        if not message.author.guild_permissions.administrator:
-            embed = discord.Embed(description='', color=discord.Colour.red())
-            embed.set_author(name='권한 부족', icon_url='https://cdn.discordapp.com/emojis/820904919484596245.png?v=1')
-            embed.set_footer(text=f'▶ {message.author}')
-            await message.reply(embed=embed)
-            return
-
-        with open(f'./DB/{message.guild.id}/{message.guild.id}.json', 'r', encoding='utf-8') as f:
-            data = json.load(f)
-
-        everyone = data['everyone']
-        invite = data['invite']
-        name = data['name']
-        avatar = data['avatar']
-        delay = data['delay']
-        thumb_url = data['thumbnail']
-        color = data['color']
-        inter = int(color, 16)
-        color = int(hex(inter), 0)
-
-        embed = discord.Embed(title=f'{message.guild.name} 설정값', colour=discord.Colour.gold())
-        embed.add_field(name='@everyone 여부', value=everyone)
-        embed.add_field(name='웹훅 이름', value=name)
-        embed.add_field(name='서버 초대주소', value=invite, inline=False)
-        embed.add_field(name='전송 간격', value=str(delay) + '분')
-        embed.add_field(name='색상', value=str(color))
-        embed.set_thumbnail(url=avatar)
-        embed.set_footer(text='▲ 웹훅 썸네일')
-        embed.set_image(url=thumb_url)
-
-        await message.reply(embed=embed)
 
     if message.content.startswith('=웹훅목록'):
         if not message.author.guild_permissions.administrator:
